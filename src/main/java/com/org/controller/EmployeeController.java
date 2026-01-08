@@ -1,17 +1,25 @@
 package com.org.controller;
 
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.org.dto.Employee;
+import com.org.respository.EmployeeRepository;
 
 @RestController
 public class EmployeeController {
+	
+	@Autowired
+	private EmployeeRepository repository;
 	
 	@RequestMapping("/get_employee")
 	public Employee getEmployee() {
@@ -29,8 +37,34 @@ public class EmployeeController {
 		
 		System.out.println(employee);
 		
+//		save the employee object
+		repository.save(employee);//inserting the data as well as updating
+		
+		System.out.println("Data Saved");
 		return employee;
 		
+	}
+	
+	@PutMapping("/updating_emp")
+	public Employee updateEmployee(@RequestBody Employee employee) {
+		
+//		Optional<Employee> optional = repository.findById(employee.getId());
+		
+//		Employee empFromDB = optional.orElse(null);
+//		
+//		if(empFromDB != null) {
+//			empFromDB.setName(employee.getName());
+//			empFromDB.setAge(employee.getAge());
+//		}
+//		else {
+//			return null;
+//		}
+//		
+//		repository.save(empFromDB);
+		
+		repository.save(employee);
+		
+		return employee;
 	}
 	
 	@GetMapping("/sample")
@@ -42,11 +76,16 @@ public class EmployeeController {
 	}
 	
 	
-	@GetMapping("/get_by_age/{age}")
-	public String getByAge(@PathVariable int age) {
+	@GetMapping("/get_by_id/{id}")
+	public Employee getByAge(@PathVariable int id) {
 		
-		System.out.println(age);
+		Optional<Employee> optional = repository.findById(id);
 		
-		return "data received";
+//		if(optional.isPresent())
+//			return optional.get();
+//		else
+//		return null;
+		
+		return optional.orElse(null);
 	}
 }
